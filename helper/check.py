@@ -42,6 +42,14 @@ class DoValidator(object):
         http_r = cls.httpValidator(proxy)
         https_r = False if not http_r else cls.httpsValidator(proxy)
 
+        # 只留下https
+        http_r = https_r
+        if http_r:
+            if work_type == "raw":
+                proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
+                if '越南' in proxy.region or '也门' in proxy.region:
+                    http_r = False
+
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proxy.last_status = True if http_r else False
@@ -49,8 +57,8 @@ class DoValidator(object):
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
             proxy.https = True if https_r else False
-            if work_type == "raw":
-                proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
+            # if work_type == "raw":
+            #     proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
         else:
             proxy.fail_count += 1
         return proxy

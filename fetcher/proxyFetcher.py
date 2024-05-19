@@ -15,6 +15,7 @@ __author__ = 'JHao'
 import re
 import json
 from time import sleep
+import requests
 
 from util.webRequest import WebRequest
 
@@ -110,7 +111,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy06():
         """ 冰凌代理 https://www.binglx.cn """
-        url = "https://www.binglx.cn/?page=1"
+        url = "http://www.binglx.cn/?page=1"
         try:
             tree = WebRequest().get(url).tree
             proxy_list = tree.xpath('.//table//tr')
@@ -170,7 +171,157 @@ class ProxyFetcher(object):
         except Exception as e:
             print(e)
 
-    # @staticmethod
+    @staticmethod
+    def freeProxy12():
+        def get_request(url):
+            proxies = {
+                "http": "http://127.0.0.1:10809",
+                "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        url = 'https://free-proxy-list.net/'
+        page = get_request(url)
+        # print(page)
+
+        from lxml import html, etree
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@class="table table-striped table-bordered"]/tbody/tr')
+        for tr in proxy_list:
+            tds = tr.xpath('./td/text()')
+            if tds:
+                proxy = '{}:{}'.format(tds[0], tds[1])
+                print('freeProxy12 ip >> {}'.format(proxy))
+                yield proxy
+
+    @staticmethod
+    def freeProxy13():
+        def get_request(url):
+            proxies = {
+                # "http": "http://127.0.0.1:10809",
+                # "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        url = 'https://www.freeproxy.world/?type=http&anonymity=4&country=&speed=&port=&page=1'
+        page = get_request(url)
+        # print(page)
+
+        from lxml import etree
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@class="layui-table"]/tbody/tr')
+        for tr in proxy_list:
+            tds = tr.xpath('./td/text()')
+            tas = tr.xpath('./td/a/text()')
+            if tds and tas:
+                proxy = '{}:{}'.format(tds[0].strip(), tas[0])
+                print('freeProxy13 ip >> {}'.format(proxy))
+                yield proxy
+
+    @staticmethod
+    def freeProxy14():
+        def get_request(url):
+            proxies = {
+                # "http": "http://127.0.0.1:10809",
+                # "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        url = 'https://www.freeproxy.world/?type=http&anonymity=&country=&speed=&port=3128&page=1'
+        page = get_request(url)
+        # print(page)
+
+        from lxml import etree
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@class="layui-table"]/tbody/tr')
+        for tr in proxy_list:
+            tds = tr.xpath('./td/text()')
+            tas = tr.xpath('./td/a/text()')
+            if tds and tas:
+                proxy = '{}:{}'.format(tds[0].strip(), tas[0])
+                print('freeProxy14 ip >> {}'.format(proxy))
+                yield proxy
+
+    @staticmethod
+    def freeProxy15():
+        def get_request(url):
+            proxies = {
+                "http": "http://127.0.0.1:10809",
+                "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        url = 'https://github.com/vakhov/fresh-proxy-list/raw/master/http.txt'
+        page = get_request(url)
+        # print(page)
+        content = page.decode('utf-8')
+        for proxy in content.split('\r'):
+            proxy = proxy.strip()
+            if proxy:
+                yield proxy
+
+    @staticmethod
+    def freeProxy16():
+        def get_request_by_chrome(url, proxies=None):
+            from selenium import webdriver
+            from selenium.webdriver.chrome.options import Options
+
+            path = 'C:\Program Files\Chrome\Application\chromedriver.exe'
+            chrome_optx = Options()  # 创建参数设置对象.
+            chrome_optx.add_argument('--headless')  # 无界面化.
+            chrome_optx.add_argument('--disable-gpu')  # 配合上面的无界面化.
+            chrome_optx.add_argument('--window-size=1366,768')  # 设置窗口大小, 窗口大小会有影响
+            chrome_optx.add_argument('--proxy-server=http://127.0.0.1:10809')
+            chrome_optx.add_argument(
+                'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36')
+            driver = webdriver.Chrome(path, options=chrome_optx)
+            driver.get(url)
+            return driver.page_source
+
+        def get_ip(tr):
+            ips = tr.xpath('./td/abbr/text()')
+            for ip in ips:
+                if ip.strip():
+                    return ip.strip()
+            ips = tr.xpath('./td/text()')
+            for ip in ips:
+                if ip.strip():
+                    return ip.strip()
+            return None
+
+        def get_port(tr):
+            ports = tr.xpath('./td/a/text()')
+            for port in ports:
+                if port.strip() and port.strip().isdigit():
+                    return port.strip()
+            ports = tr.xpath('./td/text()')
+            for port in ports:
+                if port.strip() and port.strip().isdigit():
+                    return port.strip()
+            return None
+
+        url = 'https://www.proxynova.com/proxy-server-list/country-us/'
+        page = get_request_by_chrome(url)
+        from lxml import etree
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@class="table"]/tbody/tr')
+        for tr in proxy_list:
+            ip = get_ip(tr)
+            port = get_port(tr)
+            if ip and port:
+                proxy = '{}:{}'.format(ip, port)
+                yield proxy
+
+
+# @staticmethod
     # def wallProxy01():
     #     """
     #     PzzQz https://pzzqz.com/

@@ -79,9 +79,7 @@ def httpsTimeOutValidator(proxy):
         if r.status_code == 200:
             page = requests.get(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False).content
             print("validate proxy >> {}, url >> {}".format(proxy, conf.httpsUrl))
-            print("page size >> {}".format(len(page)))
-            if len(page) < 50000:
-                return False
+            print("page >> {}".format(page))
         return True if r.status_code == 200 else False
     except Exception as e:
         return False
@@ -91,3 +89,25 @@ def httpsTimeOutValidator(proxy):
 def customValidatorExample(proxy):
     """自定义validator函数，校验代理是否可用, 返回True/False"""
     return True
+
+def write_to_file(proxy):
+
+    pass
+
+if __name__ == '__main__':
+    url = 'https://hotlink.cc/miee1m9qgmbs/Reijoh404.mp4.html/'
+    # url = conf.httpsUrl
+    proxy = '117.92.100.92:8899'
+    proxy = '218.6.120.111:7777'
+    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    try:
+        r = head(url, headers=HEADER, proxies=proxies, timeout=20, verify=False)
+        print('status_code >> {}'.format(r.status_code))
+        if r.status_code == 200:
+            resp = requests.get(url, headers=HEADER, proxies=proxies, timeout=20, verify=False)
+            if resp.status_code == 200:
+                print('{proxy} 有效'.format(proxy=proxy))
+    except Exception as e:
+        print(e)
+        print('{proxy} 无效！！'.format(proxy=proxy))
+

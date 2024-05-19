@@ -47,7 +47,8 @@ class DoValidator(object):
         if http_r:
             if work_type == "raw":
                 proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
-                if '越南' in proxy.region or '也门' in proxy.region:
+                # if '越南' in proxy.region or '也门' in proxy.region or 'amazon.com' in proxy.region:
+                if '越南' in proxy.region or '廊坊' in proxy.region or 'amazon.com' in proxy.region:
                     http_r = False
 
         proxy.check_count += 1

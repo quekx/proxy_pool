@@ -103,6 +103,26 @@ def getCount():
     return {"http_type": http_type_dict, "source": source_dict, "count": len(proxies)}
 
 
+@app.route('/record/update')
+def updateUseRecord():
+    proxy = request.args.get("proxy", "")
+    return jsonify(proxy_handler.updateUseRecord(proxy))
+
+
+@app.route('/record/getAll')
+def getAllUseRecord():
+    all_use_records = proxy_handler.getAllUseRecord()
+    return jsonify(all_use_records)
+
+
+@app.route('/record/getValid')
+def getValid():
+    valid_proxies = proxy_handler.getValid()
+    return jsonify(valid_proxies)
+
+
+
+
 def runFlask():
     if platform.system() == "Windows":
         app.run(host=conf.serverHost, port=conf.serverPort)

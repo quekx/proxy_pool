@@ -118,3 +118,15 @@ class DbClient(withMetaclass(Singleton)):
 
     def test(self):
         return self.client.test()
+
+    def updateUseRecord(self, key, data):
+        return self.client.putUseRecord(key, data)
+
+    def deleteUseRecord(self, key):
+        return self.client.deleteUseRecord(key)
+
+    def getAllUseRecord(self):
+        return self.client.getAllUseRecord()
+
+    def getUseRecord(self, key):
+        return self.client.getUseRecord(key)

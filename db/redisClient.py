@@ -41,6 +41,7 @@ class RedisClient(object):
         :return:
         """
         self.name = ""
+        self.use_record_name = "use_record"
         kwargs.pop("username")
         self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True,
                                                                    timeout=5,
@@ -152,4 +153,15 @@ class RedisClient(object):
             log.error('redis connection error: %s' % str(e), exc_info=True)
             return e
 
+    def putUseRecord(self, key, data):
+        return self.__conn.hset(self.use_record_name, key, data)
+
+    def deleteUseRecord(self, key):
+        return self.__conn.hdel(self.use_record_name, key)
+
+    def getAllUseRecord(self):
+        return self.__conn.hvals(self.use_record_name)
+
+    def getUseRecord(self, key):
+        return self.__conn.hget(self.use_record_name, key)
 

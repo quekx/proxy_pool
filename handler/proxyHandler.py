@@ -88,11 +88,11 @@ class ProxyHandler(object):
         total_use_proxy = self.db.getCount()
         return {'count': total_use_proxy}
 
-    def updateUseRecord(self, proxy):
+    def updateUseRecord(self, proxy, time=None):
         s = self.db.getUseRecord(proxy)
         if s:
             data = json.loads(s)
-            data['use_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            data['use_time'] = time if time else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             data['use_count'] = data['use_count'] + 1 if 'use_count' in data else 2
         else:
             data = {
@@ -114,29 +114,44 @@ class ProxyHandler(object):
         return list_json
 
     def getValid(self):
-        use_records = self.db.getAllUseRecord()
+        use_records = [json.loads(x) for x in self.db.getAllUseRecord()]
         # 保护期内的ip
         invalid_ip = []
         for record in use_records:
-            record_json = json.loads(record)
-            delta_time = datetime.now() - datetime.strptime(record_json['use_time'], "%Y-%m-%d %H:%M:%S")
+            delta_time = datetime.now() - datetime.strptime(record['use_time'], "%Y-%m-%d %H:%M:%S")
             if delta_time.days < 1:
-                invalid_ip.append(record_json['proxy'].split(':')[0])
+                invalid_ip.append(record['proxy'].split(':')[0])
             # else:
             #     print('delete proxy >> {}'.format(record_json))
             #     self.db.deleteUseRecord(record_json['proxy'])
         print('invalid_ip >> {}'.format(invalid_ip))
 
         # 去除保护期内的ip
-        proxies = self.db.getAll(True)
+        proxies = [json.loads(x) for x in self.db.getAll(True)]
         valid_proxies = []
         for proxy in proxies:
-            proxy_json = json.loads(proxy)
-            if proxy_json['proxy'].split(':')[0] not in invalid_ip:
-                valid_proxies.append(proxy_json)
+            if proxy['proxy'].split(':')[0] not in invalid_ip:
+                valid_proxies.append(proxy)
         valid_proxies = sorted(valid_proxies, key=lambda x: x['last_time'], reverse=True)
+
+        def get_use_record(use_records, ip):
+            for use_record in use_records:
+                if use_record['proxy'].split(':')[0] == ip:
+                    return use_record
+
+        results = []
+        for valid_proxy in valid_proxies:
+            use_record = get_use_record(use_records, valid_proxy['proxy'].split(':')[0])
+            result = {}
+            result['proxy'] = valid_proxy['proxy']
+            result['region'] = valid_proxy['region']
+            result['source'] = valid_proxy['source']
+            result['last_time'] = valid_proxy['last_time']
+            result['check_count'] = valid_proxy['check_count']
+            result['use_count'] = use_record['use_count'] if use_record and 'use_count' in use_record else 0
+            results.append(result)
         return {
-            'valid_proxies': valid_proxies,
+            'valid_proxies': results,
             'invalid_ip_num': len(invalid_ip),
             'total_num': len(proxies)
         }

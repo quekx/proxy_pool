@@ -106,7 +106,8 @@ def getCount():
 @app.route('/record/update')
 def updateUseRecord():
     proxy = request.args.get("proxy", "")
-    return jsonify(proxy_handler.updateUseRecord(proxy))
+    time = request.args.get("time", None)
+    return jsonify(proxy_handler.updateUseRecord(proxy, time))
 
 
 @app.route('/record/getAll')

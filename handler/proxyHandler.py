@@ -19,6 +19,7 @@ from handler.configHandler import ConfigHandler
 from datetime import datetime
 import json
 from util.webRequest import WebRequest
+import re
 
 
 class ProxyHandler(object):
@@ -148,7 +149,9 @@ class ProxyHandler(object):
             result['source'] = valid_proxy['source']
             result['last_time'] = valid_proxy['last_time']
             result['check_count'] = valid_proxy['check_count']
-            result['use_count'] = use_record['use_count'] if use_record and 'use_count' in use_record else 0
+            result['use_count'] = \
+                use_record['use_count'] if use_record and 'use_count' in use_record else 1 if use_record else 0
+            result['use_time'] = use_record['use_time'] if use_record and 'use_time' in use_record else '-1'
             results.append(result)
         return {
             'valid_proxies': results,
@@ -163,3 +166,37 @@ class ProxyHandler(object):
             return r['data']['address']
         except:
             return 'error'
+
+    def batchUpdateUseRecord(self, data):
+        print("batchUpdateUseRecord")
+        s = data.decode('utf-8')
+        # print("s >> {}".format(s))
+
+        proxies = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+', s)
+        default_time = '2024-01-01 00:00:00'
+        for proxy in proxies:
+            record = self.db.getUseRecord(proxy)
+            if record:
+                print("proxy {} 已存在...".format(proxy))
+                continue
+
+            print("插入 proxy: {}, time: {}".format(proxy, default_time))
+            data = {
+                'proxy': proxy,
+                'use_time': default_time,
+                'region': self.regionGetter(proxy.split(':')[0]),
+                'use_count': 1,
+            }
+            self.db.updateUseRecord(proxy, json.dumps(data, ensure_ascii=False))
+        return
+
+    def fix_data(self):
+        all_records = [json.loads(x) for x in self.db.getAllUseRecord()]
+        default_time = '2024-01-01 00:00:00'
+        for record in all_records:
+            if record['use_time'] < "2024-05-26 14:00:00":
+                print("valid proxy: {}, time: {}".format(record['proxy'], record['use_time']))
+                continue
+            print("fix proxy: {}, time: {}".format(record['proxy'], record['use_time']))
+            self.updateUseRecord(record['proxy'], default_time)
+        pass

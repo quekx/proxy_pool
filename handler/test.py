@@ -18,10 +18,19 @@ if __name__ == '__main__':
     print(delta.days)
     print(delta.seconds)
 
+    delta = datetime.strptime(time, format) - datetime.strptime(time2, format)
+    print(delta)
+    print(delta.days)
+    print(delta.seconds)
     # x = {'c': 1}
     # print('a' in x)
     # print('c' in x)
     # print(sort_key(x))
+
+    t1 = "2024-05-26 14:00:00"
+    t2 = "2024-05-26 15:00:00"
+    print(t1 < t2)
+
     pass
 
 

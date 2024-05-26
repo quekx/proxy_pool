@@ -122,6 +122,19 @@ def getValid():
     return jsonify(valid_proxies)
 
 
+# @app.route('/record/batchUpdate', methods=["GET", "POST"])
+@app.route('/record/batchUpdate', methods=["GET", "POST"])
+def batchUpdateUseRecord():
+    data = request.get_data()
+    proxy_handler.batchUpdateUseRecord(data)
+    return jsonify("1")
+
+
+@app.route('/record/fixData', methods=["GET", "POST"])
+def fixData():
+    proxy_handler.fix_data()
+    return jsonify("2")
+
 
 
 def runFlask():

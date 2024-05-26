@@ -20,6 +20,7 @@ from datetime import datetime
 import json
 from util.webRequest import WebRequest
 import re
+from helper import validator
 
 
 class ProxyHandler(object):
@@ -200,3 +201,11 @@ class ProxyHandler(object):
             print("fix proxy: {}, time: {}".format(record['proxy'], record['use_time']))
             self.updateUseRecord(record['proxy'], default_time)
         pass
+
+    def updateUseRecordStatus(self):
+        records = [json.loads(x) for x in self.db.getAllUseRecord()]
+        for record in records:
+            proxy = record['proxy']
+            res = validator.httpsTimeOutValidator(proxy)
+            print("proxy >> {}, res >> {}".format(proxy, res))
+            pass

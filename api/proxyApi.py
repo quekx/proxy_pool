@@ -135,7 +135,10 @@ def fixData():
     proxy_handler.fix_data()
     return jsonify("2")
 
-
+@app.route('/record/updateStatus', methods=["GET", "POST"])
+def updateStatus():
+    proxy_handler.updateUseRecordStatus()
+    return jsonify("3")
 
 def runFlask():
     if platform.system() == "Windows":

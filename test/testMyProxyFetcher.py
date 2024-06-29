@@ -29,10 +29,35 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 
-def get_request(url, proxies=None):
-    resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+def get_ip(tr):
+    ips = tr.xpath('./td/abbr/text()')
+    for ip in ips:
+        if ip.strip():
+            return ip.strip()
+    ips = tr.xpath('./td/text()')
+    for ip in ips:
+        if ip.strip():
+            return ip.strip()
+    return None
+
+
+def get_port(tr):
+    ports = tr.xpath('./td/a/text()')
+    for port in ports:
+        if port.strip() and port.strip().isdigit():
+            return port.strip()
+    ports = tr.xpath('./td/text()')
+    for port in ports:
+        if port.strip() and port.strip().isdigit():
+            return port.strip()
+    return None
+
+
+def get_request(url, proxies=None, headers=None):
+    resp = requests.get(url, proxies=proxies, headers=headers, timeout=30)
     print(resp.status_code)
     return resp.content
+
 
 def get_request_by_chrome(url, proxies=None):
     path = 'C:\Program Files\Chrome\Application\chromedriver.exe'
@@ -47,13 +72,16 @@ def get_request_by_chrome(url, proxies=None):
     driver.get(url)
     return driver.page_source
 
+
 def write_page(page: bytes, name):
     with open('page/{}.html'.format(name), "w", encoding='utf-8') as f:
         f.write(page.decode('utf-8'))
 
+
 def write_page(page: str, name):
     with open('page/{}.html'.format(name), "w", encoding='utf-8') as f:
         f.write(page)
+
 
 def test():
     proxies = {
@@ -73,6 +101,7 @@ def test():
             print('{}:{}'.format(tds[0], tds[1]))
         # yield ':'.join(tr.xpath('./td/text()')[0:2])
     return
+
 
 def test2():
     proxies = {
@@ -96,6 +125,7 @@ def test2():
         # yield ':'.join(tr.xpath('./td/text()')[0:2])
     return
 
+
 def test3():
     # https://github.com/vakhov/fresh-proxy-list/raw/master/http.txt
     proxies = {
@@ -114,6 +144,7 @@ def test3():
             print(proxy)
             # yield proxy
 
+
 def test4():
     # https://github.com/vakhov/fresh-proxy-list/raw/master/http.txt
     proxies = {
@@ -130,7 +161,8 @@ def test4():
     #     proxy = proxy.strip()
     #     if proxy:
     #         print(proxy)
-            # yield proxy
+    # yield proxy
+
 
 def test5():
     url = 'https://www.proxynova.com/proxy-server-list/country-us/'
@@ -148,27 +180,42 @@ def test5():
         proxy = '{}:{}'.format(ip, port)
         print(proxy)
 
-def get_ip(tr):
-    ips = tr.xpath('./td/abbr/text()')
-    for ip in ips:
-        if ip.strip():
-            return ip.strip()
-    ips = tr.xpath('./td/text()')
-    for ip in ips:
-        if ip.strip():
-            return ip.strip()
-    return None
 
-def get_port(tr):
-    ports = tr.xpath('./td/a/text()')
-    for port in ports:
-        if port.strip() and port.strip().isdigit():
-            return port.strip()
-    ports = tr.xpath('./td/text()')
-    for port in ports:
-        if port.strip() and port.strip().isdigit():
-            return port.strip()
-    return None
+def test6():
+    headers = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'Cache-Control': 'max-age=0',
+        'Connection': 'keep-alive',
+        # 'Cookie': '__51vcke__20L1wEeeGTFXijbh=01a3a953-3017-50b3-abbc-633e7d6295f1; __51vuft__20L1wEeeGTFXijbh=1712924711508; __root_domain_v=.zdaye.com; _qddaz=QD.686512924711625; acw_tc=1a0c384b17196796663351486e005e654a6e775be4c75f73c247c6834340db; __51uvsct__20L1wEeeGTFXijbh=2; Hm_lvt_dd5f60791e15b399bf200ae217689c2f=1719679665; _qdda=3-1.1; _qddab=3-9mvpkr.ly0cve5x; ASPSESSIONIDSGCCCCSC=PBMEACBABGOHOIOLDOBPNKMF; __vtins__20L1wEeeGTFXijbh=%7B%22sid%22%3A%20%22c6be58a0-2cd5-520b-9427-676a6759957e%22%2C%20%22vd%22%3A%2017%2C%20%22stt%22%3A%2081238%2C%20%22dr%22%3A%2028290%2C%20%22expires%22%3A%201719681546515%2C%20%22ct%22%3A%201719679746515%7D; Hm_lpvt_dd5f60791e15b399bf200ae217689c2f=1719679747',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+    }
+
+    url_temp = 'https://www.zdaye.com/free/{}'
+    for pageNum in range(1, 3):
+        url = url_temp.format(pageNum)
+        print(url)
+        page = get_request(url, headers=headers)
+        print(page)
+        write_page(page.decode('utf-8'), 'test6')
+        # /html/body/div[3]/div[2]/table/tbody/tr[2]/td[1]
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@id="ipc"]/tbody/tr')
+        for tr in proxy_list:
+            tds = tr.xpath('./td/text()')
+            print('{}:{}'.format(tds[0].strip(), tds[1].strip()))
+
+        # yield ':'.join(tr.xpath('./td/text()')[0:2])
+    return
+
 
 if __name__ == '__main__':
-    test5()
+    test6()

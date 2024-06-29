@@ -354,67 +354,105 @@ class ProxyFetcher(object):
                 print('freeProxy18 ip >> {}'.format(proxy))
                 yield proxy
 
+    @staticmethod
+    def freeProxy19():
+        from lxml import etree
+        def get_request(url, proxies=None, headers=None):
+            resp = requests.get(url, proxies=proxies, headers=headers, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'zh-CN,zh;q=0.9',
+            'Cache-Control': 'max-age=0',
+            'Connection': 'keep-alive',
+            # 'Cookie': '__51vcke__20L1wEeeGTFXijbh=01a3a953-3017-50b3-abbc-633e7d6295f1; __51vuft__20L1wEeeGTFXijbh=1712924711508; __root_domain_v=.zdaye.com; _qddaz=QD.686512924711625; acw_tc=1a0c384b17196796663351486e005e654a6e775be4c75f73c247c6834340db; __51uvsct__20L1wEeeGTFXijbh=2; Hm_lvt_dd5f60791e15b399bf200ae217689c2f=1719679665; _qdda=3-1.1; _qddab=3-9mvpkr.ly0cve5x; ASPSESSIONIDSGCCCCSC=PBMEACBABGOHOIOLDOBPNKMF; __vtins__20L1wEeeGTFXijbh=%7B%22sid%22%3A%20%22c6be58a0-2cd5-520b-9427-676a6759957e%22%2C%20%22vd%22%3A%2017%2C%20%22stt%22%3A%2081238%2C%20%22dr%22%3A%2028290%2C%20%22expires%22%3A%201719681546515%2C%20%22ct%22%3A%201719679746515%7D; Hm_lpvt_dd5f60791e15b399bf200ae217689c2f=1719679747',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+        }
+        url_temp = 'https://www.zdaye.com/free/{}'
+        for pageNum in range(1, 4):
+            url = url_temp.format(pageNum)
+            print(url)
+            page = get_request(url, headers=headers)
+            x = etree.HTML(page)
+            proxy_list = x.xpath('//table[@id="ipc"]/tbody/tr')
+            for tr in proxy_list:
+                tds = tr.xpath('./td/text()')
+                proxy = '{}:{}'.format(tds[0].strip(), tds[1].strip())
+                print('freeProxy19 ip >> {}'.format(proxy))
+                yield proxy
+
+
 # @staticmethod
-    # def wallProxy01():
-    #     """
-    #     PzzQz https://pzzqz.com/
-    #     """
-    #     from requests import Session
-    #     from lxml import etree
-    #     session = Session()
-    #     try:
-    #         index_resp = session.get("https://pzzqz.com/", timeout=20, verify=False).text
-    #         x_csrf_token = re.findall('X-CSRFToken": "(.*?)"', index_resp)
-    #         if x_csrf_token:
-    #             data = {"http": "on", "ping": "3000", "country": "cn", "ports": ""}
-    #             proxy_resp = session.post("https://pzzqz.com/", verify=False,
-    #                                       headers={"X-CSRFToken": x_csrf_token[0]}, json=data).json()
-    #             tree = etree.HTML(proxy_resp["proxy_html"])
-    #             for tr in tree.xpath("//tr"):
-    #                 ip = "".join(tr.xpath("./td[1]/text()"))
-    #                 port = "".join(tr.xpath("./td[2]/text()"))
-    #                 yield "%s:%s" % (ip, port)
-    #     except Exception as e:
-    #         print(e)
+# def wallProxy01():
+#     """
+#     PzzQz https://pzzqz.com/
+#     """
+#     from requests import Session
+#     from lxml import etree
+#     session = Session()
+#     try:
+#         index_resp = session.get("https://pzzqz.com/", timeout=20, verify=False).text
+#         x_csrf_token = re.findall('X-CSRFToken": "(.*?)"', index_resp)
+#         if x_csrf_token:
+#             data = {"http": "on", "ping": "3000", "country": "cn", "ports": ""}
+#             proxy_resp = session.post("https://pzzqz.com/", verify=False,
+#                                       headers={"X-CSRFToken": x_csrf_token[0]}, json=data).json()
+#             tree = etree.HTML(proxy_resp["proxy_html"])
+#             for tr in tree.xpath("//tr"):
+#                 ip = "".join(tr.xpath("./td[1]/text()"))
+#                 port = "".join(tr.xpath("./td[2]/text()"))
+#                 yield "%s:%s" % (ip, port)
+#     except Exception as e:
+#         print(e)
 
-    # @staticmethod
-    # def freeProxy10():
-    #     """
-    #     墙外网站 cn-proxy
-    #     :return:
-    #     """
-    #     urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+# @staticmethod
+# def freeProxy10():
+#     """
+#     墙外网站 cn-proxy
+#     :return:
+#     """
+#     urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
+#     request = WebRequest()
+#     for url in urls:
+#         r = request.get(url, timeout=10)
+#         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
+#         for proxy in proxies:
+#             yield ':'.join(proxy)
 
-    # @staticmethod
-    # def freeProxy11():
-    #     """
-    #     https://proxy-list.org/english/index.php
-    #     :return:
-    #     """
-    #     urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
-    #     request = WebRequest()
-    #     import base64
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
-    #         for proxy in proxies:
-    #             yield base64.b64decode(proxy).decode()
+# @staticmethod
+# def freeProxy11():
+#     """
+#     https://proxy-list.org/english/index.php
+#     :return:
+#     """
+#     urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
+#     request = WebRequest()
+#     import base64
+#     for url in urls:
+#         r = request.get(url, timeout=10)
+#         proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
+#         for proxy in proxies:
+#             yield base64.b64decode(proxy).decode()
 
-    # @staticmethod
-    # def freeProxy12():
-    #     urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+# @staticmethod
+# def freeProxy12():
+#     urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
+#     request = WebRequest()
+#     for url in urls:
+#         r = request.get(url, timeout=10)
+#         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+#         for proxy in proxies:
+#             yield ':'.join(proxy)
 
 
 if __name__ == '__main__':

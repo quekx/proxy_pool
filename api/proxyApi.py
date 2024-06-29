@@ -110,6 +110,12 @@ def updateUseRecord():
     return jsonify(proxy_handler.updateUseRecord(proxy, time))
 
 
+@app.route('/record/delete')
+def deleteUseRecord():
+    proxy = request.args.get("proxy", "")
+    return jsonify(proxy_handler.deleteUseRecord(proxy))
+
+
 @app.route('/record/getAll')
 def getAllUseRecord():
     all_use_records = proxy_handler.getAllUseRecord()
@@ -135,10 +141,12 @@ def fixData():
     proxy_handler.fix_data()
     return jsonify("2")
 
+
 @app.route('/record/updateStatus', methods=["GET", "POST"])
 def updateStatus():
     proxy_handler.updateUseRecordStatus()
     return jsonify("3")
+
 
 def runFlask():
     if platform.system() == "Windows":

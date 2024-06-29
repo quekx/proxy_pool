@@ -105,6 +105,9 @@ class ProxyHandler(object):
             }
         return self.db.updateUseRecord(proxy, json.dumps(data, ensure_ascii=False))
 
+    def deleteUseRecord(self, proxy):
+        return self.db.deleteUseRecord(proxy)
+
     def getAllUseRecord(self):
         def sort_key(x):
             # return int(x['use_count']) if 'use_count' in x else 1

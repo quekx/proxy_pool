@@ -124,12 +124,12 @@ class _ThreadChecker(Thread):
     def __ifRaw(self, proxy):
         if proxy.last_status:
             if self.proxy_handler.exists(proxy):
-                self.log.info('RawProxyCheck - {}: {} exist'.format(self.name, proxy.proxy.ljust(23)))
+                self.log.info('RawProxyCheck - {}: {} exist - {}'.format(self.name, proxy.proxy.ljust(23), proxy.source))
             else:
-                self.log.info('RawProxyCheck - {}: {} pass'.format(self.name, proxy.proxy.ljust(23)))
+                self.log.info('RawProxyCheck - {}: {} pass - {}'.format(self.name, proxy.proxy.ljust(23), proxy.source))
                 self.proxy_handler.put(proxy)
         else:
-            self.log.info('RawProxyCheck - {}: {} fail'.format(self.name, proxy.proxy.ljust(23)))
+            self.log.info('RawProxyCheck - {}: {} fail - {}'.format(self.name, proxy.proxy.ljust(23), proxy.source))
 
     def __ifUse(self, proxy):
         if proxy.last_status:
@@ -156,7 +156,7 @@ def Checker(tp, queue):
     :return:
     """
     thread_list = list()
-    for index in range(20):
+    for index in range(50):
         thread_list.append(_ThreadChecker(tp, queue, "thread_%s" % str(index).zfill(2)))
 
     for thread in thread_list:

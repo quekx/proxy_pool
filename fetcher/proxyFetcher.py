@@ -320,6 +320,39 @@ class ProxyFetcher(object):
                 proxy = '{}:{}'.format(ip, port)
                 yield proxy
 
+    @staticmethod
+    def freeProxy17():
+        r = WebRequest().get("http://127.0.0.1:5010/record/getAll", timeout=10)
+        try:
+            for each in r.json:
+                yield each['proxy']
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def freeProxy18():
+        def get_request(url):
+            proxies = {
+                # "http": "http://127.0.0.1:10809",
+                # "https": "http://127.0.0.1:10809",
+            }
+            resp = requests.get(url, proxies=proxies, headers=None, timeout=30)
+            print(resp.status_code)
+            return resp.content
+
+        url = 'https://www.freeproxy.world/?type=http&anonymity=&country=&speed=&port=3129&page=1'
+        page = get_request(url)
+
+        from lxml import etree
+        x = etree.HTML(page)
+        proxy_list = x.xpath('//table[@class="layui-table"]/tbody/tr')
+        for tr in proxy_list:
+            tds = tr.xpath('./td/text()')
+            tas = tr.xpath('./td/a/text()')
+            if tds and tas:
+                proxy = '{}:{}'.format(tds[0].strip(), tas[0])
+                print('freeProxy18 ip >> {}'.format(proxy))
+                yield proxy
 
 # @staticmethod
     # def wallProxy01():
@@ -386,7 +419,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy06():
+    for _ in p.freeProxy17():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm

@@ -391,6 +391,84 @@ class ProxyFetcher(object):
                 print('freeProxy19 ip >> {}'.format(proxy))
                 yield proxy
 
+    @staticmethod
+    def freeProxy20():
+        import time
+        def get_request(url, proxies=None, headers=None):
+            resp = requests.get(url, proxies=proxies, headers=headers, timeout=30)
+            print(resp.status_code)
+            return resp.content
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cache-control': 'max-age=0',
+            # 'cookie': '__51vcke__K3h4gFH3WOf3aJqX=b8be1874-2474-5973-bd52-9d2b20199e70; __51vuft__K3h4gFH3WOf3aJqX=1684454647961; _gac_UA-76097251-1=1.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_aw=GCL.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_au=1.1.1762678950.1712925072; _ss_s_uid=303564d5ed632861cba244108f8fb59e; channelid=0; sid=1719741929841516; __51uvsct__K3h4gFH3WOf3aJqX=3; _gid=GA1.2.8699928.1719741931; __vtins__K3h4gFH3WOf3aJqX=%7B%22sid%22%3A%20%2269661d76-b7da-5393-bfdd-f736913469aa%22%2C%20%22vd%22%3A%207%2C%20%22stt%22%3A%20114202%2C%20%22dr%22%3A%203373%2C%20%22expires%22%3A%201719743844973%2C%20%22ct%22%3A%201719742044973%7D; _ga_DC1XM0P4JL=GS1.1.1719741930.4.1.1719742045.34.0.0; _ga=GA1.1.1732449351.1684454648',
+            'priority': 'u=0, i',
+            'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        }
+
+        url_temp = 'https://www.kuaidaili.com/free/dps/{}'
+        for pageNum in range(1, 4):
+            url = url_temp.format(pageNum)
+            print(url)
+            page = get_request(url, headers=headers).decode('utf-8')
+
+            str = re.findall(r'const fpsList = (\[.*]);', page)[0]
+            print(str)
+            data = json.loads(str)
+            for item in data:
+                proxy = '{}:{}'.format(item['ip'].strip(), item['port'].strip())
+                print(proxy)
+                yield proxy
+            time.sleep(2)
+
+    @staticmethod
+    def freeProxy21():
+        import time
+        def get_request(url, proxies=None, headers=None):
+            resp = requests.get(url, proxies=proxies, headers=headers, timeout=30)
+            print(resp.status_code)
+            return resp.content
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'zh-CN,zh;q=0.9',
+            'cache-control': 'max-age=0',
+            # 'cookie': '__51vcke__K3h4gFH3WOf3aJqX=b8be1874-2474-5973-bd52-9d2b20199e70; __51vuft__K3h4gFH3WOf3aJqX=1684454647961; _gac_UA-76097251-1=1.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_aw=GCL.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_au=1.1.1762678950.1712925072; _ss_s_uid=303564d5ed632861cba244108f8fb59e; channelid=0; sid=1719741929841516; __51uvsct__K3h4gFH3WOf3aJqX=3; _gid=GA1.2.8699928.1719741931; __vtins__K3h4gFH3WOf3aJqX=%7B%22sid%22%3A%20%2269661d76-b7da-5393-bfdd-f736913469aa%22%2C%20%22vd%22%3A%207%2C%20%22stt%22%3A%20114202%2C%20%22dr%22%3A%203373%2C%20%22expires%22%3A%201719743844973%2C%20%22ct%22%3A%201719742044973%7D; _ga_DC1XM0P4JL=GS1.1.1719741930.4.1.1719742045.34.0.0; _ga=GA1.1.1732449351.1684454648',
+            'priority': 'u=0, i',
+            'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        }
+
+        url_temp = 'https://www.kuaidaili.com/free/fps/{}'
+        for pageNum in range(1, 4):
+            url = url_temp.format(pageNum)
+            print(url)
+            page = get_request(url, headers=headers).decode('utf-8')
+
+            str = re.findall(r'const fpsList = (\[.*]);', page)[0]
+            print(str)
+            data = json.loads(str)
+            for item in data:
+                proxy = '{}:{}'.format(item['ip'].strip(), item['port'].strip())
+                print(proxy)
+                yield proxy
+            time.sleep(2)
+
 
 # @staticmethod
 # def wallProxy01():

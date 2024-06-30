@@ -23,6 +23,7 @@ import re
 import sys
 from requests.structures import CaseInsensitiveDict
 import chardet
+import json
 
 import gzip
 from selenium import webdriver
@@ -78,7 +79,7 @@ def write_page(page: bytes, name):
         f.write(page.decode('utf-8'))
 
 
-def write_page(page: str, name):
+def write_page_str(page: str, name):
     with open('page/{}.html'.format(name), "w", encoding='utf-8') as f:
         f.write(page)
 
@@ -168,7 +169,7 @@ def test5():
     url = 'https://www.proxynova.com/proxy-server-list/country-us/'
     page = get_request_by_chrome(url)
     # print(page)
-    write_page(page, 'test5')
+    write_page_str(page, 'test5')
     x = etree.HTML(page)
     proxy_list = x.xpath('//table[@class="table"]/tbody/tr')
     for tr in proxy_list:
@@ -200,22 +201,55 @@ def test6():
     }
 
     url_temp = 'https://www.zdaye.com/free/{}'
-    for pageNum in range(1, 3):
+    for pageNum in range(1, 2):
         url = url_temp.format(pageNum)
         print(url)
         page = get_request(url, headers=headers)
         print(page)
-        write_page(page.decode('utf-8'), 'test6')
+        # write_page_str(page.decode('utf-8'), 'test6')
+        write_page_str(page.decode('gbk'), 'test6')
         # /html/body/div[3]/div[2]/table/tbody/tr[2]/td[1]
         x = etree.HTML(page)
         proxy_list = x.xpath('//table[@id="ipc"]/tbody/tr')
         for tr in proxy_list:
             tds = tr.xpath('./td/text()')
             print('{}:{}'.format(tds[0].strip(), tds[1].strip()))
-
-        # yield ':'.join(tr.xpath('./td/text()')[0:2])
     return
 
+def test7():
+    headers = {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'zh-CN,zh;q=0.9',
+        'cache-control': 'max-age=0',
+        # 'cookie': '__51vcke__K3h4gFH3WOf3aJqX=b8be1874-2474-5973-bd52-9d2b20199e70; __51vuft__K3h4gFH3WOf3aJqX=1684454647961; _gac_UA-76097251-1=1.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_aw=GCL.1712925072.CjwKCAjwt-OwBhBnEiwAgwzrUhxaoXS3XVNg3gIaUzv-zI6Rnmg5bymglJAc9ivP9oXCrENMGBwXnxoCm30QAvD_BwE; _gcl_au=1.1.1762678950.1712925072; _ss_s_uid=303564d5ed632861cba244108f8fb59e; channelid=0; sid=1719741929841516; __51uvsct__K3h4gFH3WOf3aJqX=3; _gid=GA1.2.8699928.1719741931; __vtins__K3h4gFH3WOf3aJqX=%7B%22sid%22%3A%20%2269661d76-b7da-5393-bfdd-f736913469aa%22%2C%20%22vd%22%3A%207%2C%20%22stt%22%3A%20114202%2C%20%22dr%22%3A%203373%2C%20%22expires%22%3A%201719743844973%2C%20%22ct%22%3A%201719742044973%7D; _ga_DC1XM0P4JL=GS1.1.1719741930.4.1.1719742045.34.0.0; _ga=GA1.1.1732449351.1684454648',
+        'priority': 'u=0, i',
+        'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    }
+
+    url_temp = 'https://www.kuaidaili.com/free/fps/{}'
+    for pageNum in range(1, 4):
+        url = url_temp.format(pageNum)
+        print(url)
+        page = get_request(url, headers=headers).decode('utf-8')
+        # print(page)
+        write_page_str(page, 'test7')
+
+        str = re.findall(r'const fpsList = (\[.*]);', page)[0]
+        print(str)
+        data = json.loads(str)
+        for item in data:
+            proxy ='{}:{}'.format(item['ip'].strip(), item['port'].strip())
+            print(proxy)
+        time.sleep(2)
+    return
 
 if __name__ == '__main__':
-    test6()
+    test7()
